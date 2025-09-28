@@ -5,12 +5,7 @@ import { useState, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/lib/redux/store";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Search, Bot, User } from "lucide-react";
 import {
@@ -30,6 +25,11 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+
+interface ChatHistoryItem {
+  q: string;
+  a: string;
+}
 
 export function InterviewerView() {
   const { candidates } = useSelector((state: RootState) => state.candidates);
@@ -105,38 +105,42 @@ export function InterviewerView() {
                           </DialogTitle>
                         </DialogHeader>
                         <div className="h-[400px] p-4 space-y-6 overflow-y-auto rounded-lg bg-muted/50">
-                          {candidate.chatHistory.map((qa: any, index: number) => (
-                            <React.Fragment key={index}>
-                              <div className="flex items-start gap-4">
-                                <Avatar className="w-10 h-10 border">
-                                  <AvatarFallback>
-                                    <Bot />
-                                  </AvatarFallback>
-                                </Avatar>
-                                <div className="grid gap-1">
-                                  <div className="font-bold">AI Interviewer</div>
-                                  <div className="p-3 rounded-lg bg-background">
-                                    <p>{qa.q}</p>
-                                  </div>
-                                </div>
-                              </div>
-                              {qa.a && (
-                                <div className="flex items-start gap-4 justify-end">
-                                  <div className="grid gap-1 text-right">
-                                    <div className="font-bold">You</div>
-                                    <div className="p-3 rounded-lg bg-primary text-primary-foreground">
-                                      <p>{qa.a}</p>
-                                    </div>
-                                  </div>
+                          {candidate.chatHistory.map(
+                            (qa: ChatHistoryItem, index: number) => (
+                              <React.Fragment key={index}>
+                                <div className="flex items-start gap-4">
                                   <Avatar className="w-10 h-10 border">
                                     <AvatarFallback>
-                                      <User />
+                                      <Bot />
                                     </AvatarFallback>
                                   </Avatar>
+                                  <div className="grid gap-1">
+                                    <div className="font-bold">
+                                      AI Interviewer
+                                    </div>
+                                    <div className="p-3 rounded-lg bg-background">
+                                      <p>{qa.q}</p>
+                                    </div>
+                                  </div>
                                 </div>
-                              )}
-                            </React.Fragment>
-                          ))}
+                                {qa.a && (
+                                  <div className="flex items-start gap-4 justify-end">
+                                    <div className="grid gap-1 text-right">
+                                      <div className="font-bold">You</div>
+                                      <div className="p-3 rounded-lg bg-primary text-primary-foreground">
+                                        <p>{qa.a}</p>
+                                      </div>
+                                    </div>
+                                    <Avatar className="w-10 h-10 border">
+                                      <AvatarFallback>
+                                        <User />
+                                      </AvatarFallback>
+                                    </Avatar>
+                                  </div>
+                                )}
+                              </React.Fragment>
+                            )
+                          )}
                         </div>
                       </DialogContent>
                     </Dialog>

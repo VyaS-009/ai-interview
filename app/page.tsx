@@ -34,7 +34,7 @@ export default function Home() {
     if (interviewStatus === "in-progress") {
       setShowResumeDialog(true);
     }
-  }, []); // Run only once on component mount
+  }, [interviewStatus]);
 
   return (
     <Tabs defaultValue="interviewee" className="w-full">
@@ -87,7 +87,7 @@ export default function Home() {
             <Button
               onClick={() => {
                 // We don't need to pass candidate data here because the persisted state already has it
-                dispatch(startInterview()); 
+                dispatch(startInterview());
                 setShowResumeDialog(false);
               }}
             >

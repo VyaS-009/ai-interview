@@ -85,7 +85,10 @@ export function IntervieweeView() {
     e.stopPropagation();
     const droppedFile = e.dataTransfer.files?.[0];
     if (droppedFile) {
-      const mockEvent = { target: { files: [droppedFile] } } as any;
+      // Create a mock event to reuse the handleFileChange logic
+      const mockEvent = {
+        target: { files: [droppedFile] },
+      } as unknown as React.ChangeEvent<HTMLInputElement>;
       handleFileChange(mockEvent);
     }
   };
@@ -111,8 +114,14 @@ export function IntervieweeView() {
 
       const candidateData = await response.json();
       dispatch(setCandidateInfo(candidateData));
-    } catch (error: any) {
-      dispatch(setError(error.message || "An unknown error occurred."));
+    } catch (error) {
+      if (error instanceof Error) {
+        dispatch(setError(error.message));
+      } else {
+        dispatch(
+          setError("An unknown error occurred while uploading the resume.")
+        );
+      }
     }
   };
 
@@ -149,7 +158,7 @@ export function IntervieweeView() {
       time.setSeconds(time.getSeconds() + currentQuestion.time);
     }
     return time;
-  }, [interviewStatus, currentQuestionIndex, currentQuestion?.time]);
+  }, [interviewStatus, currentQuestion]);
 
   const { seconds, minutes, totalSeconds, restart } = useTimer({
     expiryTimestamp,
@@ -211,10 +220,7 @@ export function IntervieweeView() {
           )}
         </CardContent>
         <CardFooter className="flex justify-end">
-          <Button
-            onClick={handleStartInterview}
-            disabled={!file || loading}
-          >
+          <Button onClick={handleStartInterview} disabled={!file || loading}>
             Start Interview
           </Button>
         </CardFooter>
@@ -243,7 +249,10 @@ export function IntervieweeView() {
             </div>
           </div>
         </div>
-        <form onSubmit={handleInfoSubmit} className="flex items-center p-4 mt-4 border-t">
+        <form
+          onSubmit={handleInfoSubmit}
+          className="flex items-center p-4 mt-4 border-t"
+        >
           <Input
             placeholder={`Type your ${currentField} here...`}
             className="mx-4 flex-1"
@@ -321,11 +330,7 @@ export function IntervieweeView() {
             onKeyDown={handleKeyPress}
             disabled={loading}
           />
-          <Button
-            size="icon"
-            onClick={handleAnswerSubmit}
-            disabled={loading}
-          >
+          <Button size="icon" onClick={handleAnswerSubmit} disabled={loading}>
             <CircleArrowRight className="w-5 h-5" />
             <span className="sr-only">Submit Answer</span>
           </Button>
@@ -343,9 +348,7 @@ export function IntervieweeView() {
         </CardHeader>
         <CardContent className="text-center space-y-6">
           <div>
-            <p className="text-lg text-muted-foreground">
-              Your final score is
-            </p>
+            <p className="text-lg text-muted-foreground">Your final score is</p>
             <p className="text-6xl font-bold text-primary">{score}/100</p>
           </div>
           <div className="p-4 text-left border rounded-lg bg-muted/50">
