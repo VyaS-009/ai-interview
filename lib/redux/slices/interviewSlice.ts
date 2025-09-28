@@ -1,4 +1,9 @@
-import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import {
+  createSlice,
+  createAsyncThunk,
+  PayloadAction,
+  ThunkAction,
+} from "@reduxjs/toolkit";
 import { addCandidate } from "./candidatesSlice";
 import { RootState } from "../store";
 
@@ -70,8 +75,9 @@ export const fetchQuestion = createAsyncThunk(
       const time =
         difficulty === "Easy" ? 20 : difficulty === "Medium" ? 60 : 120;
       return { ...data, difficulty, time, answer: "" };
-    } catch (error: any) {
-      return rejectWithValue(error.message);
+    } catch (error: unknown) {
+      if (error instanceof Error) return rejectWithValue(error.message);
+      return rejectWithValue("An unknown error occurred");
     }
   }
 );
@@ -94,8 +100,9 @@ const evaluateAnswer = createAsyncThunk(
       if (!response.ok) throw new Error("Failed to evaluate answer.");
       const data = await response.json();
       return { ...data, index: payload.index };
-    } catch (error: any) {
-      return rejectWithValue(error.message);
+    } catch (error: unknown) {
+      if (error instanceof Error) return rejectWithValue(error.message);
+      return rejectWithValue("An unknown error occurred");
     }
   }
 );
@@ -121,7 +128,6 @@ const generateSummary = createAsyncThunk(
       if (candidateInfo?.name && candidateInfo?.email) {
         dispatch(
           addCandidate({
-            id: Date.now().toString(),
             name: candidateInfo.name,
             email: candidateInfo.email,
             score: summaryData.finalScore,
@@ -131,8 +137,9 @@ const generateSummary = createAsyncThunk(
         );
       }
       return summaryData;
-    } catch (error: any) {
-      return rejectWithValue(error.message);
+    } catch (error: unknown) {
+      if (error instanceof Error) return rejectWithValue(error.message);
+      return rejectWithValue("An unknown error occurred");
     }
   }
 );
@@ -167,7 +174,7 @@ const interviewSlice = createSlice({
     submitCollectedInfo(state, action: PayloadAction<string>) {
       if (state.missingInfo && state.candidateInfo) {
         const key = state.missingInfo[state.currentMissingInfoIndex];
-        (state.candidateInfo as any)[key] = action.payload;
+        state.candidateInfo[key] = action.payload;
         state.currentMissingInfoIndex++;
         if (state.currentMissingInfoIndex >= state.missingInfo.length) {
           state.interviewStatus = "in-progress";
@@ -243,8 +250,10 @@ const interviewSlice = createSlice({
 
 // --- COORDINATOR THUNK ---
 export const handleAnswerSubmission =
-  (answer: string): any =>
-  async (dispatch: any, getState: any) => {
+  (
+    answer: string
+  ): ThunkAction<void, RootState, unknown, PayloadAction<string>> =>
+  async (dispatch, getState) => {
     // Immediately update UI with the answer
     dispatch(interviewSlice.actions.submitAnswer(answer));
 

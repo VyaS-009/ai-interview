@@ -34,7 +34,8 @@ export default function Home() {
     if (interviewStatus === "in-progress") {
       setShowResumeDialog(true);
     }
-  }, []); // Run only once on component mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Run only once on component mount to check for persisted state
 
   return (
     <Tabs defaultValue="interviewee" className="w-full">
@@ -87,7 +88,7 @@ export default function Home() {
             <Button
               onClick={() => {
                 // We don't need to pass candidate data here because the persisted state already has it
-                dispatch(startInterview()); 
+                dispatch(startInterview());
                 setShowResumeDialog(false);
               }}
             >

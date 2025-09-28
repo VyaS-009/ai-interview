@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import Link from "next/link";
 import StoreProvider from "@/lib/redux/StoreProvider";
 
 const inter = Inter({ subsets: ["latin"] });
