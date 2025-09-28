@@ -60,7 +60,7 @@ export const fetchQuestion = createAsyncThunk(
   "interview/fetchQuestion",
   async (difficulty: QuestionDifficulty, { rejectWithValue }) => {
     try {
-      const response = await fetch("/api/generate-question", {
+      const response = await fetch("http://localhost:8001/generate-question", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ difficulty }),
@@ -82,7 +82,7 @@ const evaluateAnswer = createAsyncThunk(
     const state = getState() as RootState;
     const qa = state.interview.questionsAndAnswers[payload.index];
     try {
-      const response = await fetch("/api/evaluate-answer", {
+      const response = await fetch("http://localhost:8001/evaluate-answer", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -110,7 +110,7 @@ const generateSummary = createAsyncThunk(
         q: qa.question,
         a: qa.answer,
       }));
-      const response = await fetch("/api/generate-summary", {
+      const response = await fetch("http://localhost:8001/generate-summary", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ chatHistory }),

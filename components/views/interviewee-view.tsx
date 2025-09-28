@@ -100,7 +100,7 @@ export function IntervieweeView() {
     formData.append("file", resumeFile);
 
     try {
-      const response = await fetch("/api/upload-resume", {
+      const response = await fetch("http://localhost:8001/upload-resume", {
         method: "POST",
         body: formData,
       });
