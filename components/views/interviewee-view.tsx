@@ -102,7 +102,7 @@ export function IntervieweeView() {
     formData.append("file", resumeFile);
 
     try {
-      const response = await fetch("/api/upload-resume", {
+      const response = await fetch("https://ai-interview-backend-rust.vercel.app/upload-resume", {
         method: "POST",
         body: formData,
       });
